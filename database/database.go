@@ -15,6 +15,7 @@ const (
 	MeasurementNode   = "node"   // Measurement for per-node statistics
 	MeasurementGlobal = "global" // Measurement for summarized global statistics
 	batchMaxSize      = 500
+	batchDuration     = time.Second * 5
 )
 
 type DB struct {
@@ -46,14 +47,17 @@ func New(config *models.Config) *DB {
 
 	db.wg.Add(1)
 	go db.addWorker()
-	go db.deleteWorker()
+
+	if db.config.Influxdb.DeleteInterval > 0 {
+		go db.deleteWorker()
+	}
 
 	return db
 }
 
 func (db *DB) DeletePoints() {
-	query := fmt.Sprintf("delete from %s where time < now() - %dm", MeasurementNode, db.config.Influxdb.DeleteTill)
-	log.Println("delete", MeasurementNode, "older than", db.config.Influxdb.DeleteTill, "minutes")
+	query := fmt.Sprintf("delete from %s where time < now() - %dm", MeasurementNode, db.config.Influxdb.DeleteAfter)
+	log.Println("delete", MeasurementNode, "older than", db.config.Influxdb.DeleteAfter, "minutes")
 	db.client.Query(client.NewQuery(query, db.config.Influxdb.Database, "m"))
 }
 
@@ -77,8 +81,9 @@ func (db *DB) Close() {
 	db.wg.Wait()
 	db.client.Close()
 }
+
 func (db *DB) deleteWorker() {
-	duration := time.Minute * time.Duration(db.config.Influxdb.DeleteInterval)
+	duration := time.Second * time.Duration(db.config.Influxdb.DeleteInterval)
 	ticker := time.NewTicker(duration)
 	for {
 		select {
@@ -101,7 +106,6 @@ func (db *DB) addWorker() {
 	var bp client.BatchPoints
 	var err error
 	var writeNow, closed bool
-	batchDuration := time.Second * time.Duration(db.config.Influxdb.SaveInterval)
 	timer := time.NewTimer(batchDuration)
 
 	for !closed {

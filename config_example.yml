@@ -4,7 +4,8 @@ respondd:
   interface: eth0
 
   # Collected data every n seconds
-  collectinterval: 60
+  collect_interval: 60
+
 webserver:
   enable: false
   port: 8080
@@ -22,7 +23,7 @@ nodes:
   aliases_path: /var/www/html/meshviewer/data/aliases.json
 
   # Export nodes and graph every n seconds
-  saveinterval: 5
+  save_interval: 5
 
   # Expire offline nodes after n days
   max_age: 7
@@ -33,3 +34,12 @@ influxdb:
   database: ffhb
   username:
   password:
+
+  # Export nodes and graph every n seconds
+  save_interval: 5
+
+  # Delete data every n seconds
+  delete_interval: 3600
+
+  # Delete data after n days
+  delete_after: 7

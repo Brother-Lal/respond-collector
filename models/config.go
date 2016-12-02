@@ -12,7 +12,7 @@ type Config struct {
 	Respondd struct {
 		Enable          bool   `yaml:"enable"`
 		Interface       string `yaml:"interface"`
-		CollectInterval int    `yaml:"collectinterval"`
+		CollectInterval int    `yaml:"collect_interval"`
 	} `yaml:"respondd"`
 	Webserver struct {
 		Enable  bool   `yaml:"enable"`
@@ -31,8 +31,8 @@ type Config struct {
 		NodesMiniPath string `yaml:"nodesmini_path"`
 		GraphsPath    string `yaml:"graphs_path"`
 		AliasesPath   string `yaml:"aliases_path"`
-		SaveInterval  int    `yaml:"saveinterval"` // Save nodes every n seconds
-		MaxAge        int    `yaml:"max_age"`      // Remove nodes after n days of inactivity
+		SaveInterval  int    `yaml:"save_interval"` // Save nodes every n seconds
+		MaxAge        int    `yaml:"max_age"`       // Remove nodes after n days of inactivity
 	} `yaml:"nodes"`
 	Influxdb struct {
 		Enable         bool   `yaml:"enable"`
@@ -40,9 +40,8 @@ type Config struct {
 		Database       string `yaml:"database"`
 		Username       string `yaml:"username"`
 		Password       string `yaml:"password"`
-		SaveInterval   int    `yaml:"saveinterval"`   // Save nodes every n seconds
-		DeleteInterval int    `yaml:"deleteinterval"` // Delete stats of nodes every n minutes
-		DeleteTill     int    `yaml:"deletetill"`     // Delete stats of nodes till now-deletetill n minutes
+		DeleteInterval int    `yaml:"delete_interval"` // Delete stats of nodes every n minutes
+		DeleteAfter    int    `yaml:"delete_after"`    // Delete stats of nodes after n minutes
 	}
 }
 
